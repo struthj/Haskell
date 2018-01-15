@@ -1,8 +1,6 @@
 module Nat where
-
-import Prelude hiding (Enum(..), sum)
-
-
+import Data.List (foldr)
+import Prelude hiding (Enum(..),sum)
 --
 -- * Part 2: Natural numbers
 --
@@ -63,7 +61,10 @@ isZero _ = False
 --   >>> toInt three
 --   3
 --
-toInt = undefined
+toInt:: Nat -> Int
+toInt (Zero) = 0
+toInt n = 1 + (toInt (pred n))
+
 
 -- | Add two natural numbers.
 --
@@ -79,7 +80,9 @@ toInt = undefined
 --   >>> add two three == add three two
 --   True
 --   
-add = undefined
+add:: Nat -> Nat -> Nat
+add (Zero) n = n
+add (Succ n) m = add n (Succ m)
 
 
 -- | Subtract the second natural number from the first. Return zero
@@ -97,8 +100,12 @@ add = undefined
 --   >>> sub one three
 --   Zero
 --
-sub = undefined
-
+sub:: Nat -> Nat -> Nat
+sub n Zero = n
+sub (Succ n) (Succ m) = sub n m
+sub n m
+    | (toInt n) > (toInt m) = Zero
+    | otherwise = (n)
 
 -- | Is the left value greater than the right?
 --
@@ -111,7 +118,11 @@ sub = undefined
 --   >>> gt two two
 --   False
 --
-gt = undefined
+gt:: Nat -> Nat -> Bool
+gt n m = 
+    if (toInt n) > (toInt m)
+        then True
+    else False
 
 
 -- | Multiply two natural numbers.
@@ -128,7 +139,10 @@ gt = undefined
 --   >>> toInt (mult three three)
 --   9
 --
-mult = undefined
+mult:: Nat -> Nat -> Nat
+mult _ Zero = Zero
+mult Zero _ = Zero
+mult (Succ n) m = add (mult n m) m
 
 
 -- | Compute the sum of a list of natural numbers.
@@ -142,7 +156,13 @@ mult = undefined
 --   >>> toInt (sum [one,two,three])
 --   6
 --
-sum = undefined
+toNat::Int -> Nat
+toNat 0 = Zero
+toNat n = Succ (toNat (n -1))
+
+sum:: [Nat] -> Nat
+sum [] = Zero
+sum list = toNat (foldr (+) 0 (map toInt list))
 
 
 -- | An infinite list of all of the *odd* natural numbers, in order.
