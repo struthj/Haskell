@@ -39,6 +39,10 @@ pred:: Nat -> Nat
 pred Zero = Zero
 pred (Succ n) = n
 
+succs:: Nat -> Nat
+succs Zero = Succ Zero
+succs (Succ n) = Succ (Succ n)
+
 
 -- | True if the given value is zero.
 --
@@ -104,7 +108,7 @@ sub:: Nat -> Nat -> Nat
 sub n Zero = n
 sub (Succ n) (Succ m) = sub n m
 sub n m
-    | (toInt n) > (toInt m) = Zero
+    | (gt n m) == True = Zero
     | otherwise = (n)
 
 -- | Is the left value greater than the right?
@@ -119,11 +123,11 @@ sub n m
 --   False
 --
 gt:: Nat -> Nat -> Bool
-gt n m = 
-    if (toInt n) > (toInt m)
-        then True
-    else False
-
+gt _ Zero = True
+gt Zero _ = False
+gt (Succ n) (Succ m) = if (Succ n) == (Succ m)
+                            then False
+                        else gt n m
 
 -- | Multiply two natural numbers.
 --
@@ -162,7 +166,7 @@ toNat n = Succ (toNat (n -1))
 
 sum:: [Nat] -> Nat
 sum [] = Zero
-sum list = toNat (foldr (+) 0 (map toInt list))
+sum list = foldl (add) Zero (list)
 
 
 -- | An infinite list of all of the *odd* natural numbers, in order.
@@ -173,4 +177,4 @@ sum list = toNat (foldr (+) 0 (map toInt list))
 --   >>> toInt (sum (take 100 odds))
 --   10000
 --
-odds = undefined
+odds = (succs Zero) : map (add two) odds
