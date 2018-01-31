@@ -115,3 +115,44 @@ prettyPrint ((Pen x):xs) = "pen " ++ (printMode (x)) ++ ";\n" ++ prettyPrint(xs)
 prettyPrint ((Call m e):xs) = "call " ++ m ++ "(" ++ (printVars (e)) ++ ");\n" ++ prettyPrint(xs)
 prettyPrint [] = []
 
+optE::Expr -> Expr
+optE (Add (Add (N x) (N y)) (V v)) = Add (N (x+y)) (V v)
+optE (Add ( V v) (Add (N x) (N y)) ) = Add (V v) (N (x+y))
+optE (Add (N x) (N y)) = N (x+y)
+optE (V s) = (V s)
+optE (Add (V x) (V y)) = Add (V x) (V y)
+optE (N n) = ( N n)
+optE (Add (N x) e) = optE(Add (N x) (optE (e)))
+optE (Add e  (N x)) = optE(Add (optE (e)) (N x))
+optE (Add (V x) e) = Add (V x) (optE (e))
+optE (Add e  (V x)) = Add (optE (e)) (V x)
+optE (Add e x) = optE (Add (optE (e)) (optE(x)))
+
+optEs:: [Expr] -> [Expr]
+optEs (x:xs) = [optE(x)] ++ optEs(xs)
+optEx [x] = optE(x)
+
+
+-- optE (Add e (N x) ) = optE ( Add (optE(e)) (N x) )
+-- optE (Add (N x) e) = optE ( Add (N x) (optE(e)) )
+-- optE (Add e (V x) ) = Add (optE(e)) (V x)
+-- optE (Add (V x) e) = Add (V x) (optE(e))
+
+
+-- optE (Add v e) = Add v (optE(e))
+-- optE (Add (N x) ( N y)) = (N (x+y))
+
+
+-- optE (Add (N x) (V m)) = Add (N x)  (optE (Add n m))
+-- optE (Add e (N x) ) = Add (optE(e)) (N x)
+
+
+
+optP:: Prog -> Prog
+optP ((Define m v (y:ys)):xs) = optP(y:ys ) ++ optP (xs)
+optP ((Move x y):xs) = [(Move (optE(x)) (optE(y)))] ++ optP(xs)
+optP ((Pen x):xs) = [(Pen x)] ++ optP(xs)
+optP ((Call m e):xs) = [(Call m (optEs(e)))] ++ optP(xs)
+optP [] = []
+
+
