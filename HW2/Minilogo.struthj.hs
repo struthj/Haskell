@@ -148,11 +148,8 @@ optEx [x] = optE(x)
 
 
 
-optP:: Prog -> Prog
-optP ((Define m v (y:ys)):xs) = optP(y:ys ) ++ optP (xs)
-optP ((Move x y):xs) = [(Move (optE(x)) (optE(y)))] ++ optP(xs)
-optP ((Pen x):xs) = [(Pen x)] ++ optP(xs)
-optP ((Call m e):xs) = [(Call m (optEs(e)))] ++ optP(xs)
-optP [] = []
-
-
+optP :: Prog -> Prog
+optP []                = []
+optP ((Move a b) : xs) = (Move (optE a) (optE b)) : (optP xs)
+optP ((Call a b) : xs) = (Call a (map optE b)) : (optP xs)
+optP (x : xs)          = x : (optP xs)
