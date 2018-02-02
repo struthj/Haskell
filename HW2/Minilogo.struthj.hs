@@ -108,12 +108,12 @@ printMode:: Mode -> String
 printMode Up = "up"
 printMode Down = "down"
 
-prettyPrint:: Prog -> String
-prettyPrint ((Define m v (y:ys)):xs) = "define " ++ m ++ " " ++ "(" ++  printVar(v) ++ ") " ++ "{ \n" ++ prettyPrint(y:ys) ++ "}\n" ++ prettyPrint(xs)
-prettyPrint ((Move x y):xs) = "move (" ++ (printExp (x)) ++ "," ++ (printExp (y)) ++ ");\n" ++ prettyPrint(xs)
-prettyPrint ((Pen x):xs) = "pen " ++ (printMode (x)) ++ ";\n" ++ prettyPrint(xs)
-prettyPrint ((Call m e):xs) = "call " ++ m ++ "(" ++ (printVars (e)) ++ ");\n" ++ prettyPrint(xs)
-prettyPrint [] = []
+pretty:: Prog -> String
+pretty ((Define m v (y:ys)):xs) = "define " ++ m ++ " " ++ "(" ++  printVar(v) ++ ") " ++ "{ \n" ++ pretty(y:ys) ++ "}\n" ++ pretty(xs)
+pretty ((Move x y):xs) = "move (" ++ (printExp (x)) ++ "," ++ (printExp (y)) ++ ");\n" ++ pretty(xs)
+pretty ((Pen x):xs) = "pen " ++ (printMode (x)) ++ ";\n" ++ pretty(xs)
+pretty ((Call m e):xs) = "call " ++ m ++ "(" ++ (printVars (e)) ++ ");\n" ++ pretty(xs)
+pretty [] = []
 
 optE::Expr -> Expr
 optE (Add (Add (N x) (N y)) (V v)) = Add (N (x+y)) (V v)
