@@ -88,13 +88,13 @@ macros:: Prog -> [Macro]
 macros (x:xs) = macCounter [(x)] ++ macCounter (xs)
 
 printVars:: [Expr] -> String
-printVars (x:xs) = printExp (x) ++ "," ++ printVars (xs)
+printVars (x:xs) = intercalate "," (map printExp (x:xs))
 printVars [x] = printExp(x)
 printVars [] = []
 
 
 printVar:: [Var] -> String
-printVar (x:xs) = x ++ "," ++ printVar (xs)
+printVar (x:xs) = intercalate "," (x:xs)
 printVar [x] = x
 printVar [] = []
 
