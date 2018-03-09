@@ -1,5 +1,5 @@
 module KarelSemantics where
-
+-- Struth Joseph
 import Prelude hiding (Either(..))
 import Data.Function (fix)
 
