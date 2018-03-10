@@ -94,24 +94,31 @@ ancestor(X,Y) :- parent(X,Y).
 % Part 2. Language implementation
 %%
 
-% num(N) :- number(N).
-% str(S) :- string(S).
-% bool(false).
+num(N) :- number(N).
+str(S) :- string(S).
+bool(B) :- B = t | B = f.
 % bool(true).
 % add(X,Y) :- number(X) + number(Y).
 % cmd(add(X,Y)) :- number(S) + number(Y).
 % cmd :- num | str | bool
 %     | 
 
-
+remove([Head|Tail],Tail, Head).
+addN(X,Y,R) :- R is +(X,Y).
 
 % 1. Define the predicate `cmd/3`, which describes the effect of executing a
 %    command on the stack.
 
-cmd(C, S1, S2) :- append(S1, C, S2).
+cmd(N, S1, S2) :- num(N), append([N], S1, S2).
+cmd(S ,S1 , S2) :- str(S), append([S], S1, S2).
+cmd(add, [X,Y,Tail], S2) :- num(X), num(Y), addN(X,Y,R), append([R],Tail, S2).
+cmd(lte, [X,Y,Tail], S2) :- num(X), num(Y), (X =< Y -> append([t],Tail, S2) ; append([f],Tail, S2)).
 
 
 % 2. Define the predicate `prog/3`, which describes the effect of executing a
 %    program on the stack.
+
+prog(P, S1, S2) :- cmd(P, S1, S2).
+prog([P,Tail], S1, S2) :- cmd(P, S1, R),  prog(Tail, R, S2).
 
 
