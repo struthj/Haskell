@@ -111,14 +111,15 @@ addN(X,Y,R) :- R is +(X,Y).
 
 cmd(N, S1, S2) :- num(N), append([N], S1, S2).
 cmd(S ,S1 , S2) :- str(S), append([S], S1, S2).
-cmd(add, [X,Y,Tail], S2) :- num(X), num(Y), addN(X,Y,R), append([R],Tail, S2).
-cmd(lte, [X,Y,Tail], S2) :- num(X), num(Y), (X =< Y -> append([t],Tail, S2) ; append([f],Tail, S2)).
-
+cmd(add, [X,Y|Tail], S2) :- num(X), num(Y), addN(X,Y,R), append([R],Tail, S2).
+cmd(lte, [X,Y|Tail], S2) :- num(X), num(Y), (X =< Y -> append([t],Tail, S2) ; append([f],Tail, S2)).
+cmd(if(P1,_), [t|Tail], S2) :- prog(P1, Tail, S2).
+cmd(if(_,P2), [f|Tail], S2) :- prog(P2,Tail,S2).
 
 % 2. Define the predicate `prog/3`, which describes the effect of executing a
 %    program on the stack.
 
-prog(P, S1, S2) :- cmd(P, S1, S2).
-prog([P,Tail], S1, S2) :- cmd(P, S1, R),  prog(Tail, R, S2).
+prog([],S,S).
+prog([P|P1], S1, S2) :- cmd(P, S1, R),  prog(P1, R, S2).
 
 
